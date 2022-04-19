@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace project_22.Server.Service
+namespace project_22.Server.Services
 {
     public interface IProductService
     {
-        Task<IEnumerable<Product>> GetAllAsync();
+        Task<ServiceResponse<IEnumerable<Product>>> GetAllAsync();
     }
     public class ProductService : IProductService
     {
@@ -15,9 +15,13 @@ namespace project_22.Server.Service
             _context = context;
         }
 
-        public async Task<IEnumerable<Product>> GetAllAsync()
+        public async Task<ServiceResponse<IEnumerable<Product>>> GetAllAsync()
         {
             var products = new List<Product>();
+            var response = new ServiceResponse<IEnumerable<Product>>
+            {
+                Data = products
+            };
             foreach (var product in await _context.Products.Include(p => p.Category).ToListAsync())
             {
                 products.Add(new Product
@@ -31,7 +35,7 @@ namespace project_22.Server.Service
                     CategoryName = product.Category.Name
                 });
             }
-            return products;
+            return response;
         }
     }
 }

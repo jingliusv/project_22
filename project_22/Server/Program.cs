@@ -1,9 +1,9 @@
 global using project_22.Shared;
 global using project_22.Server.Data;
+global using project_22.Server.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.ResponseCompression;
 
-using project_22.Server.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 

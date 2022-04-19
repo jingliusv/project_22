@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using project_22.Server.Service;
-using project_22.Shared.Entity;
+
 
 namespace project_22.Server.Controllers
 {
