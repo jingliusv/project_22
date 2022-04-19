@@ -1,0 +1,12 @@
+﻿.image-wrapper {
+    width: 150px;
+    text-align: center;
+}
+
+.image{
+    max-width: 150px;
+}
+
+.cart-product-price{
+    font-weight: 600;
+}

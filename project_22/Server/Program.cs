@@ -19,6 +19,7 @@ builder.Services.AddSwaggerGen();
 // add DataConetxt
 builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("Sql")));
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICartService, CartService>();
 
 var app = builder.Build();
 

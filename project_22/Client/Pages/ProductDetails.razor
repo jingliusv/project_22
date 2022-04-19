@@ -1,5 +1,6 @@
 ﻿@page "/product/{id:int}"
 @inject IProductService ProductService
+@inject ICartService CartService
 
 @if(product == null)
 {
@@ -16,7 +17,7 @@ else
         <h5 class="card-title">@product.ProductName</h5>
         <p class="card-text">@product.Description</p>
         <p class="card-text">@product.Price</p>        
-        <a href="#" class="btn btn-primary">Lägg till</a>
+        <button class="btn btn-primary" @onclick="AddToCart"><i class="oi oi-cart"></i>   Lägg till</button>
       </div>
     </div>
 }
@@ -37,6 +38,15 @@ else
             message = result.Message;
         else 
             product = result.Data;
-            
+
+    }
+
+    private async Task AddToCart()
+    {
+        var cartItem = new CartItem
+        {
+            ProductId = product.Id,
+        };
+        await CartService.AddToCart(cartItem);
     }
 }
