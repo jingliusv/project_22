@@ -16,9 +16,15 @@ namespace project_22.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Product>>> GetProducts()
+        public async Task<ActionResult<ServiceResponse<List<Product>>>> GetProducts()
         {
             return Ok(await _productService.GetAllAsync());
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ServiceResponse<Product>>> GetProductById(int id)
+        {
+            return Ok(await _productService.GetByIdAsync(id));
         }
     }
 }

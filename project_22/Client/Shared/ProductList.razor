@@ -3,6 +3,9 @@
 @if(ProductService.Products == null || ProductService.Products.Count == 0)
 {
     <span>Ladda Produkter...</span>
+    <div class="spinner-border text-primary" role="status">
+      <span class="sr-only"></span>
+    </div>
 }
 else
 {
@@ -15,7 +18,7 @@ else
                 </div>
                 <div class="col-md-6">
                     <div class="card-body">
-                        <h5 class="card-title">@product.ProductName</h5>
+                        <a href="product/@product.Id"><h5 class="card-title">@product.ProductName</h5></a>
                         <p class="card-text font-weight-light">@product.CategoryName</p>
                         <p class="card-text">@product.Description</p>
                         <p class="card-title color-danger">@product.Price SEK</p>

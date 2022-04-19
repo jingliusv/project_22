@@ -1,6 +1,42 @@
-﻿@page "/products/{id:int}"
-<h3>ProductDetails</h3>
+﻿@page "/product/{id:int}"
+@inject IProductService ProductService
+
+@if(product == null)
+{
+    <span>@message</span>   
+    <div class="spinner-border text-primary" role="status">
+      <span class="sr-only"></span>
+    </div>
+}
+else
+{
+    <div class="card" style="max-width: 1000px;">
+      <img src="@product.ImageUrl" class="card-img-top" alt="@product.ProductName">
+      <div class="card-body">
+        <h5 class="card-title">@product.ProductName</h5>
+        <p class="card-text">@product.Description</p>
+        <p class="card-text">@product.Price</p>        
+        <a href="#" class="btn btn-primary">Lägg till</a>
+      </div>
+    </div>
+}
 
 @code {
+    private Product? product = null;
+    private string message = string.Empty;
 
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        message = "Ladda Produkt...";
+        var result = await ProductService.GetProductById(Id);
+
+        if (!result.Success)
+            message = result.Message;
+        else 
+            product = result.Data;
+            
+    }
 }
