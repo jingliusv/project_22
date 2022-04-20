@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace project_22.Server.Controllers
 {
@@ -19,6 +20,19 @@ namespace project_22.Server.Controllers
         {
             var result = await _cartService.GetCartProductsAsync(cartItems);
             return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ServiceResponse<List<CartProductResponse>>>> StoreCartResponse(List<CartItem> cartItems)
+        {
+            var result = await _cartService.StoreCartProductsAsync(cartItems);
+            return Ok(result);
+        }
+
+        [HttpGet("count")]
+        public async Task<ActionResult<ServiceResponse<int>>> GetCartItemsCount()
+        {
+            return await _cartService.GetCartItemsCount();
         }
     }
 }

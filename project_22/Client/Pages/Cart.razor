@@ -22,7 +22,7 @@ else
                    <h5><a href="/product/@product.ProductId">@product.ProductName</a></h5>
                </div>
                <div class="cart-product-price">@product.Price SEK</div>
-               <input type="number" value="@product.Qty" @onchange="@((ChangeEventArgs e) => UpdateQty(e, product))" min="1" />
+               <input class="cart-qty" type="number" value="@product.Qty" @onchange="@((ChangeEventArgs e) => UpdateQty(e, product))" min="1" />
                <button class="btn btn-danger" @onclick="@(() => RemoveCartProduct(product.ProductId))">Ta bort</button>
            </li>               
         }
@@ -34,7 +34,7 @@ else
 
 @code {
     List<CartProductResponse> cartProducts = null;
-    string message = "Loading cart...";
+    string message = "Ladda varukorg...";
 
     protected override async Task OnInitializedAsync()
     {

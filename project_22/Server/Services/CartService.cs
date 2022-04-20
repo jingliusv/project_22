@@ -1,20 +1,30 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace project_22.Server.Services
 {
     public interface ICartService
     {
         Task<ServiceResponse<List<CartProductResponse>>> GetCartProductsAsync(List<CartItem> cartItems);
+        Task<ServiceResponse<List<CartProductResponse>>> StoreCartProductsAsync(List<CartItem> cartItems);
+        Task<ServiceResponse<int>> GetCartItemsCount();
     }
 
     public class CartService : ICartService
     {
         private readonly DataContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CartService(DataContext context)
+        public CartService(DataContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
+
+        private int GetUserId() => int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+
+
         public async Task<ServiceResponse<List<CartProductResponse>>> GetCartProductsAsync(List<CartItem> cartItems)
         {
             var result = new ServiceResponse<List<CartProductResponse>> 
@@ -43,6 +53,21 @@ namespace project_22.Server.Services
             }
 
             return result;
+        }
+
+        public async Task<ServiceResponse<List<CartProductResponse>>> StoreCartProductsAsync(List<CartItem> cartItems)
+        {
+            cartItems.ForEach(c => c.UserId = GetUserId());
+            _context.CartItems.AddRange(cartItems);
+            await _context.SaveChangesAsync();
+
+            return await GetCartProductsAsync(await _context.CartItems.Where(c => c.UserId == GetUserId()).ToListAsync());
+        }
+
+        public async Task<ServiceResponse<int>> GetCartItemsCount()
+        {
+            var count = (await _context.CartItems.Where(c => c.UserId == GetUserId()).ToListAsync()).Count;
+            return new ServiceResponse<int> { Data = count };
         }
     }
 }

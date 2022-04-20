@@ -1,0 +1,81 @@
+﻿@page "/register"
+@inject IAuthService AuthService
+
+<h3 class="text-center mb-5">Registera Dig</h3>
+
+<EditForm Model="user" OnValidSubmit="HandleResgistration">
+    <DataAnnotationsValidator />
+    <div class="row">
+        <div class="form-group col-md-6 mb-3">
+            <label for="firstName">Förnamn</label>
+            <InputText class="form-control" @bind-Value="user.FirstName" id="firstName" />
+            <ValidationMessage For="@(() => user.FirstName)" />
+        </div>
+        <div class="form-group col-md-6 mb-3">
+            <label for="lastName">Efternamn</label>
+            <InputText type="text" @bind-Value="user.LastName" class="form-control" id="lastName" />
+            <ValidationMessage For="@(() => user.LastName)" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-6 mb-3">
+            <label for="email">Epost</label>
+            <InputText @bind-Value="user.Email" type="email"  class="form-control" id="email"/>
+            <ValidationMessage For="@(() => user.Email)" />
+        </div>
+        <div class="form-group col-md-6 mb-3">
+            <label for="telephone">Mobil</label>
+            <InputText @bind-Value="user.TelephoneNumber" class="form-control" id="telephone" />
+            <ValidationMessage For="@(() => user.TelephoneNumber)" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-6 mb-3">
+            <label for="password">Lösenord</label>
+            <InputText type="password" @bind-Value="user.Password" class="form-control" id="password"/>
+            <ValidationMessage For="@(() => user.Password)" />
+        </div>
+        <div class="form-group col-md-6 mb-3">
+            <label for="repeatPassword">Upprepa Lösenord</label>
+            <InputText type="password" @bind-Value="user.RepeatPassword" class="form-control" id="repeatPassword"/>
+            <ValidationMessage For="@(() => user.RepeatPassword)" />
+        </div>
+    </div>     
+        
+    <div class="form-group mb-3">
+        <label for="streetName">Adress</label>
+        <InputText @bind-Value="user.StreetName" class="form-control" id="streetName" />
+        <ValidationMessage For="@(() => user.StreetName)" />
+    </div>
+    <div class="row">
+        <div class="form-group col-md-6 mb-3">
+            <label for="postalCode">Postnummer</label>
+            <InputText @bind-Value="user.PostalCode" class="form-control" id="postalCode" />
+            <ValidationMessage For="@(() => user.PostalCode)" />
+        </div>
+        <div class="form-group col-md-6 mb-3">
+            <label for="city">Ort</label>
+            <InputText @bind-Value="user.City" class="form-control" id="city" />
+            <ValidationMessage For="@(() => user.City)" />
+        </div>
+    </div> 
+    <div class="mb-2 @msgCSS">
+        <span>@responseMsg</span>
+    </div>
+    <button type="submit" class="btn btn-primary text-center mb-5">Registera</button>
+</EditForm>
+
+@code {
+    UserRegisterForm user = new UserRegisterForm();
+
+    string responseMsg = string.Empty;
+    string msgCSS = string.Empty;
+
+    async Task HandleResgistration()
+    {
+        var result = await AuthService.Register(user);
+        responseMsg = result.Message;
+        msgCSS = result.Success ? "text-success" : "text-danger";
+    }
+
+}

@@ -10,3 +10,7 @@
 .cart-product-price{
     font-weight: 600;
 }
+
+.cart-qty{
+    width: 55px;
+}

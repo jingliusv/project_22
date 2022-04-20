@@ -8,6 +8,7 @@ namespace project_22.Shared
 {
     public class CartItem
     {
+        public int UserId { get; set; }
         public int ProductId { get; set; }
         public int Qty { get; set; } = 1;
     }
