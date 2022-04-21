@@ -6,7 +6,6 @@ namespace project_22.Client.Services
     {
         event Action OnChange;
         Task AddToCart(CartItem cartItem);
-        Task<List<CartItem>> GetAllCartItems();
         Task<List<CartProductResponse>> GetAllCartProducts();
         Task RemoveCartProduct(int productId);
         Task UpdateQty(CartProductResponse product);
@@ -37,69 +36,73 @@ namespace project_22.Client.Services
         {
             if (await IsUserAuthenticated())
             {
-                Console.WriteLine("user is authenticated.");
+                await _http.PostAsJsonAsync("api/carts/add", cartItem);
             }
             else
             {
-                Console.WriteLine("user is not authenticated.");
-            }
+                var cart = await _localStorage.GetItemAsync<List<CartItem>>("cart");
+                if (cart == null)
+                {
+                    cart = new List<CartItem>();
+                }
 
-            var cart = await _localStorage.GetItemAsync<List<CartItem>>("cart");
-            if (cart == null)
-            {
-                cart = new List<CartItem>();
-            }
+                var sameItem = cart.Find(c => c.ProductId == cartItem.ProductId);
+                if (sameItem == null)
+                {
+                    cart.Add(cartItem);
+                }
+                else
+                {
+                    sameItem.Qty += cartItem.Qty;
+                }
 
-            var sameItem = cart.Find(c => c.ProductId == cartItem.ProductId);
-            if (sameItem == null)
-            {
-                cart.Add(cartItem);
+                await _localStorage.SetItemAsync("cart", cart);
             }
-            else
-            {
-                sameItem.Qty += cartItem.Qty;
-            }
-
-            await _localStorage.SetItemAsync("cart", cart);
+ 
             await GetCartItemsCount();
-        }
-
-
-        public async Task<List<CartItem>> GetAllCartItems()
-        {
-            await GetCartItemsCount();
-            var cart = await _localStorage.GetItemAsync<List<CartItem>>("cart");
-            if( cart == null)
-            {
-                cart= new List<CartItem>();
-            }
-
-            return cart;
         }
 
         public async Task<List<CartProductResponse>> GetAllCartProducts()
         {
-            var cartItems = await _localStorage.GetItemAsync<List<CartItem>>("cart");
-            var response = await _http.PostAsJsonAsync("api/Carts/Products", cartItems);
-            var cartProducts = await response.Content.ReadFromJsonAsync<ServiceResponse<List<CartProductResponse>>>();
-            return cartProducts.Data;
+                        
+            if(await IsUserAuthenticated())
+            {
+                var response = await _http.GetFromJsonAsync<ServiceResponse<List<CartProductResponse>>>("api/carts");
+                return response.Data;
+            }
+            else
+            {
+                var cartItems = await _localStorage.GetItemAsync<List<CartItem>>("cart");
+                if (cartItems == null)
+                    return new List<CartProductResponse>();
+
+                var response = await _http.PostAsJsonAsync("api/Carts/Products", cartItems);
+                var cartProducts = await response.Content.ReadFromJsonAsync<ServiceResponse<List<CartProductResponse>>>();
+                return cartProducts.Data;
+            }
+            
         }
 
         public async Task RemoveCartProduct(int productId)
         {
-            var cart = await _localStorage.GetItemAsync<List<CartItem>>("cart");
-            if (cart == null)
-                return;
-
-            var cartItem = cart.Find(c => c.ProductId == productId);
-
-            if(cartItem != null)
+            if(await IsUserAuthenticated())
             {
-                cart.Remove(cartItem);
-                await _localStorage.SetItemAsync("cart", cart);
-                await GetCartItemsCount();
+                await _http.DeleteAsync($"api/carts/{productId}");
             }
-                
+            else
+            {
+                var cart = await _localStorage.GetItemAsync<List<CartItem>>("cart");
+                if (cart == null)
+                    return;
+
+                var cartItem = cart.Find(c => c.ProductId == productId);
+
+                if (cartItem != null)
+                {
+                    cart.Remove(cartItem);
+                    await _localStorage.SetItemAsync("cart", cart);                   
+                }
+            }
         }
 
         public async Task StoreCartItems(bool emptyLocalCart = false)
@@ -117,17 +120,30 @@ namespace project_22.Client.Services
 
         public async Task UpdateQty(CartProductResponse product)
         {
-            var cart = await _localStorage.GetItemAsync<List<CartItem>>("cart");
-            if (cart == null)
-                return;
-
-            var cartItem = cart.Find(c => c.ProductId == product.ProductId);
-
-            if (cartItem != null)
+            if(await IsUserAuthenticated())
             {
-                cartItem.Qty = product.Qty;
-                await _localStorage.SetItemAsync("cart", cart);
+                var request = new CartItem
+                {
+                    ProductId = product.ProductId,
+                    Qty = product.Qty,
+                };
+                await _http.PutAsJsonAsync("api/Carts/update-qty", request);
             }
+            else
+            {
+                var cart = await _localStorage.GetItemAsync<List<CartItem>>("cart");
+                if (cart == null)
+                    return;
+
+                var cartItem = cart.Find(c => c.ProductId == product.ProductId);
+
+                if (cartItem != null)
+                {
+                    cartItem.Qty = product.Qty;
+                    await _localStorage.SetItemAsync("cart", cart);
+                }
+            }
+            
         }
 
         public async Task GetCartItemsCount()

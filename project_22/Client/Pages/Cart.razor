@@ -49,7 +49,9 @@ else
 
     private async Task LoadCart()
     {
-        if((await CartService.GetAllCartItems()).Count == 0)
+        await CartService.GetCartItemsCount();
+        cartProducts = await CartService.GetAllCartProducts();
+        if(cartProducts == null || cartProducts.Count == 0)
         {
             message = "Din varukorg är tom.";
             cartProducts = new List<CartProductResponse>();
