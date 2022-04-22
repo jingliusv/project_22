@@ -16,6 +16,7 @@ namespace project_22.Server.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<CartItem>().HasKey(c => new { c.UserId, c.ProductId});
+            modelBuilder.Entity<OrderItem>().HasKey(o => new { o.OrderId, o.ProductId });
 
             modelBuilder.Entity<ProductEntity>().HasData(
                 new ProductEntity
@@ -69,5 +70,8 @@ namespace project_22.Server.Data
         public virtual DbSet<CategoryEntity> Categories { get; set; } = null!;
         public virtual DbSet<UserEntity> Users { get; set; } = null!;
         public virtual DbSet<CartItem> CartItems { get; set; } = null!;
+        public virtual DbSet<OrderItem> OrderItems { get; set; } = null!;
+        public virtual DbSet<Order> Orders { get; set; } = null!;
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿@page "/cart"
 @inject ICartService CartService
+@inject IOrderService OrderService
 
 <PageTitle>Varukorg</PageTitle>
 
@@ -8,6 +9,11 @@
 @if(cartProducts == null || cartProducts.Count == 0)
 {
     <span>@message</span>
+}
+else if (orderPlaced)
+{
+    <p class="display-6 mt-5 text-center">Tack för din beställning!</p>
+    <p class="text-dark mt-2 text-center">Du kan kolla din beställning <a href="profile">här</a>.</p>
 }
 else
 {
@@ -30,14 +36,17 @@ else
             Summa(@cartProducts.Count): @cartProducts.Sum(p => p.Price * p.Qty) SEK
         </div>
     </ul>
+    <button @onclick="PlaceOrder" class="btn btn-lg btn-info float-end mt-2">Beställ</button>
 }
 
 @code {
     List<CartProductResponse> cartProducts = null;
     string message = "Ladda varukorg...";
+    bool orderPlaced = false;
 
     protected override async Task OnInitializedAsync()
     {
+        orderPlaced = false;
         await LoadCart();
     }
 
@@ -68,5 +77,12 @@ else
         if (product.Qty < 1)
             product.Qty = 1;
         await CartService.UpdateQty(product);
+    }
+
+    private async Task PlaceOrder()
+    {
+        await OrderService.PlaceOrder();
+        await CartService.GetCartItemsCount();
+        orderPlaced = true;
     }
 }
