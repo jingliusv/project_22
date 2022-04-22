@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using project_22.Shared.Entity;
+using project_22.Shared.Form;
 
 namespace project_22.Server.Services
 {
@@ -6,6 +8,7 @@ namespace project_22.Server.Services
     {
         Task<ServiceResponse<IEnumerable<Product>>> GetAllAsync();
         Task<ServiceResponse<Product>> GetByIdAsync(int id);
+        Task<ServiceResponse<Product>> CreateAsync(AddProductForm form);
     }
     public class ProductService : IProductService
     {
@@ -14,6 +17,51 @@ namespace project_22.Server.Services
         public ProductService(DataContext context)
         {
             _context = context;
+        }
+
+        public async Task<ServiceResponse<Product>> CreateAsync(AddProductForm form)
+        {
+            if (!await _context.Products.AnyAsync(p => p.ArticleNumber == form.ArticleNumber))
+            {
+                var productEntity = new ProductEntity
+                {
+                    ArticleNumber = form.ArticleNumber,
+                    ProductName = form.ProductName,
+                    Description = form.Description,
+                    ImageUrl = form.ImageUrl,
+                    Price = form.Price
+                };
+
+                // Get category, use cartegory service in future
+                var categoryEntity = await _context.Categories.FirstOrDefaultAsync(c => c.Name.ToLower() == form.CategoryName.ToLower());
+                if (categoryEntity == null)
+                {
+                    productEntity.Category = new CategoryEntity { Name = form.CategoryName };
+                }
+                else
+                {
+                    productEntity.CategoryId = categoryEntity.Id;
+                }
+
+                _context.Products.Add(productEntity);
+                await _context.SaveChangesAsync();
+
+                return new ServiceResponse<Product>
+                {
+                    Data = new Product
+                    {
+                        Id = productEntity.Id,
+                        ArticleNumber = productEntity.ArticleNumber,
+                        ProductName = productEntity.ProductName,
+                        ImageUrl = productEntity.ImageUrl,
+                        Description = productEntity.Description,
+                        Price = productEntity.Price,
+                        CategoryName = productEntity.Category.Name
+                    },
+                    Message = "Produkten har skapats."
+                };
+            }
+            return new ServiceResponse<Product> { Data = null!, Success = false, Message = "Kunde inte skapa produkten." };
         }
 
         public async Task<ServiceResponse<IEnumerable<Product>>> GetAllAsync()
@@ -63,5 +111,7 @@ namespace project_22.Server.Services
             }
             return response;
         }
+
+        
     }
 }
