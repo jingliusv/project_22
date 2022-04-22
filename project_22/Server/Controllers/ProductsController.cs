@@ -32,5 +32,17 @@ namespace project_22.Server.Controllers
         {
             return Ok(await _productService.GetByIdAsync(id));
         }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ServiceResponse<Product>>> UpdateProduct(UpdateProductForm form, int id)
+        {
+            return Ok(await _productService.UpdateAsync(form, id));
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<ServiceResponse<int>>> DeleteProduct(int id)
+        {
+            return Ok(await _productService.DeleteAsync(id));
+        }
     }
 }

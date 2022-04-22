@@ -9,6 +9,8 @@ namespace project_22.Server.Services
         Task<ServiceResponse<IEnumerable<Product>>> GetAllAsync();
         Task<ServiceResponse<Product>> GetByIdAsync(int id);
         Task<ServiceResponse<Product>> CreateAsync(AddProductForm form);
+        Task<ServiceResponse<Product>> UpdateAsync(UpdateProductForm form, int id);
+        Task<ServiceResponse<int>> DeleteAsync(int id);
     }
     public class ProductService : IProductService
     {
@@ -18,6 +20,7 @@ namespace project_22.Server.Services
         {
             _context = context;
         }
+
 
         public async Task<ServiceResponse<Product>> CreateAsync(AddProductForm form)
         {
@@ -62,6 +65,18 @@ namespace project_22.Server.Services
                 };
             }
             return new ServiceResponse<Product> { Data = null!, Success = false, Message = "Kunde inte skapa produkten." };
+        }
+
+        public async Task<ServiceResponse<int>> DeleteAsync(int id)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product != null)
+            {
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
+                return new ServiceResponse<int> { Data = product.Id, Message = $"Produkten med Id nummer {product.Id} tas bort."};
+            }
+            return new ServiceResponse<int> { Success = false, Message = "Tyvärr, vi hittar inte den här produkten." };
         }
 
         public async Task<ServiceResponse<IEnumerable<Product>>> GetAllAsync()
@@ -112,6 +127,36 @@ namespace project_22.Server.Services
             return response;
         }
 
-        
+
+        public async Task<ServiceResponse<Product>> UpdateAsync(UpdateProductForm form, int id)
+        {
+            var productEntity = await _context.Products.Include(p => p.Category).FirstOrDefaultAsync(x => x.Id == id);
+            if(productEntity != null)
+            {
+                productEntity.ArticleNumber = form.ArticleNumber;
+                productEntity.ProductName = form.ProductName;
+                productEntity.Description = form.Description;
+                productEntity.Price = form.Price;
+                productEntity.ImageUrl = form.ImageUrl;
+                _context.Entry(productEntity).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return new ServiceResponse<Product>
+                {
+                    Data = new Product
+                    {
+                        Id = productEntity.Id,
+                        ArticleNumber = productEntity.ArticleNumber,
+                        ProductName = productEntity.ProductName,
+                        Description = productEntity.Description,
+                        Price = productEntity.Price,
+                        ImageUrl = productEntity.ImageUrl,
+                        CategoryName = productEntity.Category.Name
+                    },
+                    Message = "Produkten har blivit uppdaterat."
+                };
+            }
+            return new ServiceResponse<Product> { Data = null!, Success = false, Message = "Tyvärr, vi har inte hitta den här produkten." };
+        }
+
     }
 }
