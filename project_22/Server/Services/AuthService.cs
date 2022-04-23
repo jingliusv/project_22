@@ -130,6 +130,11 @@ namespace project_22.Server.Services
                 new Claim(ClaimTypes.Email, user.Email),
             };
 
+            if (user.Email.Equals("admin@visionare.se") || user.Email.Equals("jingliuweb@gmail.com"))
+            {
+                claims.Add(new Claim(ClaimTypes.Role, "Administrator"));
+            }
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);

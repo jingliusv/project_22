@@ -1,26 +1,28 @@
 ﻿@page "/addproduct"
 @inject IProductService ProductService
+@attribute [Authorize(Roles = "Administrator")]
+@using System.Security.Claims
 
 
 <AuthorizeView>   
-    <ChildContent Context="addproduct">
+    <Authorized Context="Auth">
         <h3 class="mt-4 mb-3">Lägg till produkt</h3>
-        <EditForm Model="@product" OnSubmit="HandleSubmit">
+        <EditForm Model="@productForm" OnSubmit="HandleSubmit">
             <DataAnnotationsValidator />
-            <InputText @bind-Value="product.ArticleNumber" placeholder="Artikelnummer" class="form-control mb-3" />
-            <InputText @bind-Value="product.ProductName" placeholder="Produkts Namn" class="form-control mb-3" />
-            <InputText @bind-Value="product.Description" placeholder="Produkts Beskrivning" class="form-control mb-3" />
-            <InputText @bind-Value="product.ImageUrl" placeholder="Produkts Bild" class="form-control mb-3" />
-            <InputText @bind-Value="product.CategoryName" placeholder="Kategori" class="form-control mb-3" />
-            <InputNumber @bind-Value="product.Price" placeholder="Pris (i SEK)" class="form-control mb-3" />
+            <InputText @bind-Value="productForm.ArticleNumber" placeholder="Artikelnummer" class="form-control mb-3" />
+            <InputText @bind-Value="productForm.ProductName" placeholder="Produkts Namn" class="form-control mb-3" />
+            <InputText @bind-Value="productForm.Description" placeholder="Produkts Beskrivning" class="form-control mb-3" />
+            <InputText @bind-Value="productForm.ImageUrl" placeholder="Produkts Bild" class="form-control mb-3" />
+            <InputText @bind-Value="productForm.CategoryName" placeholder="Kategori" class="form-control mb-3" />
+            <InputNumber @bind-Value="productForm.Price" placeholder="Pris (i SEK)" class="form-control mb-3" />
             <div class="mb-2 @msgCSS">
                 <span>@message</span>
             </div>
             <button type="submit" class="btn btn-primary mt-2">Skapa Produkt</button>
         </EditForm>
-    </ChildContent>
+    </Authorized>
     <NotAuthorized>
-        <h3 class="mt-5">Hoppsan, du har ingen rättigheter att kolla den här sidan.</h3>
+        <h3 class="mt-5">Tyvärr, du har ingen rättigheter att kolla den här sidan.</h3>
         <h5><a href="login">Logga In</a> eller <a href="register">Registera</a></h5>
     </NotAuthorized>
 </AuthorizeView>
@@ -29,14 +31,16 @@
 
 
 @code {
-    AddProductForm product = new AddProductForm();
+    AddProductForm productForm = new AddProductForm();
     string message = string.Empty;
     string msgCSS = string.Empty;
 
     async Task HandleSubmit()
     {
-        var result = await ProductService.CreateProduct(product);
+        var result = await ProductService.CreateProduct(productForm);
         message = result.Message;
         msgCSS = result.Success ? "text-success" : "text-danger";
     }
+
+
 }

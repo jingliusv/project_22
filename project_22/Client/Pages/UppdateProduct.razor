@@ -1,5 +1,6 @@
 ﻿@page "/uppdateproduct/{id:int}"
 @inject IProductService ProductService
+@attribute [Authorize(Roles = "Administrator")]
 
 
 <AuthorizeView>   

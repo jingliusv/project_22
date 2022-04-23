@@ -19,7 +19,7 @@ else
         <p class="card-text">@product.Description</p>
         <p class="card-text">@product.Price</p>        
         <button class="btn btn-primary" @onclick="AddToCart"><i class="oi oi-cart"></i>   Lägg till</button>
-        <AuthorizeView>
+        <AuthorizeView Roles = "Administrator">
             <button class="btn btn-primary" @onclick="@(() => UpdateProduct(product.Id))">Uppdatera Produkt</button>
         </AuthorizeView>
       </div>
