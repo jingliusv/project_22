@@ -9,6 +9,7 @@ namespace project_22.Client.Services
         Task GetProducts();
         Task<ServiceResponse<Product>> GetProductById(int productId);
         Task<ServiceResponse<Product>> CreateProduct(AddProductForm form);
+        Task<ServiceResponse<Product>> UpdateProduct(UpdateProductForm form, int productId);
     }
     public class ProductService : IProductService
     {
@@ -51,6 +52,20 @@ namespace project_22.Client.Services
             var result = await _http.GetFromJsonAsync<ServiceResponse<List<Product>>>("api/products");
             if(result != null && result.Data != null)
                 Products = result.Data;
+        }
+
+        public async Task<ServiceResponse<Product>> UpdateProduct(UpdateProductForm form, int productId)
+        {
+            if (await _authService.IsUserAuthenticated())
+            {
+                var result = await _http.PutAsJsonAsync($"api/Products/{productId}", form);
+                return await result.Content.ReadFromJsonAsync<ServiceResponse<Product>>();
+            }
+            else
+            {
+                _navigationManager.NavigateTo("login");
+                return new ServiceResponse<Product> { Data = null };
+            }
         }
     }
 }

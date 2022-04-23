@@ -1,0 +1,44 @@
+﻿@page "/uppdateproduct/{id:int}"
+@inject IProductService ProductService
+
+
+<AuthorizeView>   
+    <ChildContent Context="addproduct">
+        <h3 class="mt-4 mb-3">Uppdatera produkt</h3>
+        <EditForm Model="@product" OnSubmit="HandleSubmit">
+            <DataAnnotationsValidator />
+            <InputText @bind-Value="product.ArticleNumber" placeholder="Artikelnummer" class="form-control mb-3" />
+            <InputText @bind-Value="product.ProductName" placeholder="Produkts Namn" class="form-control mb-3" />
+            <InputText @bind-Value="product.Description" placeholder="Produkts Beskrivning" class="form-control mb-3" />
+            <InputText @bind-Value="product.ImageUrl" placeholder="Produkts Bild" class="form-control mb-3" />
+            <InputNumber @bind-Value="product.Price" placeholder="Pris (i SEK)" class="form-control mb-3" />
+            <div class="mb-2 @msgCSS">
+                <span>@message</span>
+            </div>
+            <button type="submit" class="btn btn-primary mt-2">Uppdatera Produkten</button>
+        </EditForm>
+    </ChildContent>
+    <NotAuthorized>
+        <h3 class="mt-5">Hoppsan, du har ingen rättigheter att kolla den här sidan.</h3>
+        <h5><a href="login">Logga In</a> eller <a href="register">Registera</a></h5>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+
+
+@code {
+    UpdateProductForm product = new UpdateProductForm();
+    string message = string.Empty;
+    string msgCSS = string.Empty;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    async Task HandleSubmit()
+    {
+        var result = await ProductService.UpdateProduct(product, Id);
+        message = result.Message;
+        msgCSS = result.Success ? "text-success" : "text-danger";
+    }
+}

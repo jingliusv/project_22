@@ -1,6 +1,7 @@
 ﻿@page "/product/{id:int}"
 @inject IProductService ProductService
 @inject ICartService CartService
+@inject NavigationManager NavigationManager
 
 @if(product == null)
 {
@@ -18,6 +19,9 @@ else
         <p class="card-text">@product.Description</p>
         <p class="card-text">@product.Price</p>        
         <button class="btn btn-primary" @onclick="AddToCart"><i class="oi oi-cart"></i>   Lägg till</button>
+        <AuthorizeView>
+            <button class="btn btn-primary" @onclick="@(() => UpdateProduct(product.Id))">Uppdatera Produkt</button>
+        </AuthorizeView>
       </div>
     </div>
 }
@@ -48,5 +52,10 @@ else
             ProductId = product.Id,
         };
         await CartService.AddToCart(cartItem);
+    }
+
+    private async Task UpdateProduct(int id)
+    {
+        NavigationManager.NavigateTo($"uppdateproduct/{id}");
     }
 }

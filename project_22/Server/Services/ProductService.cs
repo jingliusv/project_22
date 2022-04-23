@@ -155,7 +155,7 @@ namespace project_22.Server.Services
                     Message = "Produkten har blivit uppdaterat."
                 };
             }
-            return new ServiceResponse<Product> { Data = null!, Success = false, Message = "Tyvärr, vi har inte hitta den här produkten." };
+            return new ServiceResponse<Product> { Data = null!, Success = false, Message = "Tyvärr, vi har inte hittat den här produkten." };
         }
 
     }
