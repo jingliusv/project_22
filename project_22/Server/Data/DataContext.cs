@@ -48,6 +48,16 @@ namespace project_22.Server.Data
                     ImageUrl = "https://images.unsplash.com/photo-1547949003-9792a18a2601?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
                     Price = 1800,
                     CategoryId = 2,
+                },
+                new ProductEntity
+                {
+                    Id = 4,
+                    ArticleNumber = "1000XM4",
+                    ProductName = "Sony WH-1000XM4",
+                    Description = "WH-1000XM4-hörlurarna kombinerar elegant design och komfort på hög nivå. Supermjuka, tryckavlastande kuddar i uretanskum ger jämnt tryck och ökad kontakt med öronen för god passform. Den lägre vikten gör att du knappt kommer känna att du har dem på dig.",
+                    ImageUrl = "https://images.unsplash.com/photo-1546435770-a3e426bf472b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1165&q=80",
+                    Price = 1699,
+                    CategoryId = 3,
                 }
             );
 
@@ -61,6 +71,16 @@ namespace project_22.Server.Data
                 {
                     Id = 2,
                     Name = "Kamera Väska"
+                },
+                new CategoryEntity 
+                { 
+                    Id = 3, 
+                    Name = "Hörlurar"
+                },
+                new CategoryEntity
+                {
+                    Id = 4,
+                    Name = "Högtalare"
                 }
             );
 

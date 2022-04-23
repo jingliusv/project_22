@@ -19,5 +19,18 @@ namespace project_22.Server.Controllers
         {
             return Ok(await _userService.GetAll());
         }
+
+        [HttpPut("email")]
+        public async Task<ActionResult<ServiceResponse<string>>> UpdateUserInfo(UpdateUserForm form, string email)
+        {
+            return Ok(await _userService.UpdateAsync(form, email));
+        }
+
+        [HttpDelete("email")]
+        public async Task<ActionResult<ServiceResponse<bool>>> DeleteUser(string email)
+        {
+            return Ok(await _userService.Delete(email));
+        }
+
     }
 }

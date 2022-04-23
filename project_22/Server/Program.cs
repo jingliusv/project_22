@@ -1,6 +1,7 @@
 global using project_22.Shared;
 global using project_22.Server.Data;
 global using project_22.Server.Services;
+global using project_22.Shared.Form;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
