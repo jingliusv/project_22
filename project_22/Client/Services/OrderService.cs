@@ -10,24 +10,20 @@ namespace project_22.Client.Services
     public class OrderService : IOrderService
     {
         private readonly HttpClient _http;
-        private readonly AuthenticationStateProvider _authStateProvider;
+        private readonly IAuthService _authService;
         private readonly NavigationManager _navigationManager;
 
-        public OrderService(HttpClient http, AuthenticationStateProvider authStateProvider, NavigationManager navigationManager)
+        public OrderService(HttpClient http, IAuthService authService, NavigationManager navigationManager)
         {
-            _http = http;
-            _authStateProvider = authStateProvider;
-            _navigationManager = navigationManager;
+            _http = http ?? throw new ArgumentNullException(nameof(http));
+            _authService = authService ?? throw new ArgumentNullException(nameof(authService));
+            _navigationManager = navigationManager ?? throw new ArgumentNullException(nameof(navigationManager));
         }
 
-        private async Task<bool> IsUserAuthenticated()
-        {
-            return (await _authStateProvider.GetAuthenticationStateAsync()).User.Identity.IsAuthenticated;
-        }
 
         public async Task PlaceOrder()
         {
-            if(await IsUserAuthenticated())
+            if(await _authService.IsUserAuthenticated())
             {
                 await _http.PostAsync("api/orders", null);
             }

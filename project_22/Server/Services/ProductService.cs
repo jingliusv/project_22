@@ -18,7 +18,7 @@ namespace project_22.Server.Services
 
         public ProductService(DataContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
 

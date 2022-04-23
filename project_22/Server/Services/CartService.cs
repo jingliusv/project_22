@@ -21,11 +21,9 @@ namespace project_22.Server.Services
 
         public CartService(DataContext context, IAuthService authService)
         {
-            _context = context;
-            _authService = authService;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _authService = authService ?? throw new ArgumentNullException(nameof(authService));
         }
-
-       
 
 
         public async Task<ServiceResponse<List<CartProductResponse>>> GetCartProductsAsync(List<CartItem> cartItems)

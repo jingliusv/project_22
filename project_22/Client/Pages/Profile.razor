@@ -2,7 +2,7 @@
 @inject IOrderService OrderService
 
 <AuthorizeView>
-    <h3 class="mt-2">Hej @context.User.Identity.Name!</h3>
+    <h3 class="mt-2">Hej @context.User.Identity!.Name!</h3>
     <p>Du är inloggad nu.</p>
 
     <h3 class="mt-5 mb-2">Din Beställning</h3>
@@ -42,7 +42,7 @@
           </tbody>
         </table>       
     }
-    </AuthorizeView>
+ </AuthorizeView>
 
 @code {
     List<OrderResponse> orders = new List<OrderResponse>();

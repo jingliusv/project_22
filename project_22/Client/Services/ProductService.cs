@@ -13,27 +13,31 @@ namespace project_22.Client.Services
     public class ProductService : IProductService
     {
         private readonly HttpClient _http;
-        private readonly AuthenticationStateProvider _authStateProvider;
+        private readonly IAuthService _authService;
         private readonly NavigationManager _navigationManager;
 
-        public ProductService(HttpClient http, AuthenticationStateProvider authStateProvider, NavigationManager navigationManager)
+        public ProductService(HttpClient http, IAuthService authService, NavigationManager navigationManager)
         {
             _http = http;
-            _authStateProvider = authStateProvider;
+            _authService = authService;
             _navigationManager = navigationManager;
         }
 
-        private async Task<bool> IsUserAuthenticated()
-        {
-            return (await _authStateProvider.GetAuthenticationStateAsync()).User.Identity.IsAuthenticated;
-        }
 
         public List<Product> Products { get; set; } = new List<Product>();
 
         public async Task<ServiceResponse<Product>> CreateProduct(AddProductForm form)
         {     
-            var result = await _http.PostAsJsonAsync("api/Products", form);
-            return await result.Content.ReadFromJsonAsync<ServiceResponse<Product>>();
+            if(await _authService.IsUserAuthenticated())
+            {
+                var result = await _http.PostAsJsonAsync("api/Products", form);
+                return await result.Content.ReadFromJsonAsync<ServiceResponse<Product>>();
+            }
+            else
+            {
+                _navigationManager.NavigateTo("login");
+                return new ServiceResponse<Product> { Data = null };
+            }
         }
 
         public async Task<ServiceResponse<Product>> GetProductById(int productId)
