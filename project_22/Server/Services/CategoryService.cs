@@ -12,7 +12,7 @@ namespace project_22.Server.Services
 
         public CategoryService(DataContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         public async Task<CategoryEntity> GetAsync(string categoryName)
