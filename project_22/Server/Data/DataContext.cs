@@ -58,6 +58,16 @@ namespace project_22.Server.Data
                     ImageUrl = "https://images.unsplash.com/photo-1546435770-a3e426bf472b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1165&q=80",
                     Price = 1699,
                     CategoryId = 3,
+                },
+                new ProductEntity
+                {
+                    Id = 5,
+                    ArticleNumber = "JBLGO3NHJ",
+                    ProductName = "JBL GO 3",
+                    Description = "JBL GO 3 är den perfekta högtalaren att ta med dig på språng! Med färgladd tyg och uttrycksfulla detaljer som är inspi- rerade av street style, är detta tillbehör en nödvändighet på din nästa utflykt. GO 3 är vatten- och dammtät enligt IP67 och har en integrerade ögla som gör att du kan bära med den vart som helst.",
+                    ImageUrl = "https://images.unsplash.com/photo-1608223652565-63abae6cf733?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                    Price = 365,
+                    CategoryId = 4,
                 }
             );
 

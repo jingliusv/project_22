@@ -1,25 +1,26 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using project_22.Shared.Entity;
 
 namespace project_22.Server.Services
 {
     public interface IUserService
     {
-        Task<IEnumerable<User>> GetAll();
-        Task<ServiceResponse<bool>> Delete(string email);
+        Task<IEnumerable<User>> GetAllAsync();
+        Task<ServiceResponse<bool>> DeleteAsync(string email);
+        Task<UserEntity> GetUserByIdAsync(int id);
         Task<ServiceResponse<string>> UpdateAsync(UpdateUserForm user, string email);
     }
 
     public class UserService : IUserService
     {
         private readonly DataContext _context;
-        private readonly IAuthService _authService;
 
         public UserService(DataContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<ServiceResponse<bool>> Delete(string email)
+        public async Task<ServiceResponse<bool>> DeleteAsync(string email)
         {
             var userEntity = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (userEntity != null)
@@ -31,7 +32,7 @@ namespace project_22.Server.Services
             return new ServiceResponse<bool> { Data = false, Message = "Tyvärr, vi kunde inte hittat den här användaren." };
         }
 
-        public async Task<IEnumerable<User>> GetAll()
+        public async Task<IEnumerable<User>> GetAllAsync()
         {
             var users = new List<User>();
             foreach (var u in await _context.Users.ToListAsync())
@@ -48,6 +49,15 @@ namespace project_22.Server.Services
                 });
             }
             return users;
+        }
+
+        public async Task<UserEntity> GetUserByIdAsync(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if(user != null)
+                return user;
+
+            return null!;
         }
 
         public async Task<ServiceResponse<string>> UpdateAsync(UpdateUserForm user, string email)

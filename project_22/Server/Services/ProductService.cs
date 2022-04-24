@@ -15,10 +15,12 @@ namespace project_22.Server.Services
     public class ProductService : IProductService
     {
         private readonly DataContext _context;
+        private readonly ICategoryService _categoryService;
 
-        public ProductService(DataContext context)
+        public ProductService(DataContext context, ICategoryService categoryService)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
+            _categoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
         }
 
 
@@ -35,8 +37,8 @@ namespace project_22.Server.Services
                     Price = form.Price
                 };
 
-                // Get category, use cartegory service in future
-                var categoryEntity = await _context.Categories.FirstOrDefaultAsync(c => c.Name.ToLower() == form.CategoryName.ToLower());
+                // Get category from CategoryService
+                var categoryEntity = await _categoryService.GetAsync(form.CategoryName);
                 if (categoryEntity == null)
                 {
                     productEntity.Category = new CategoryEntity { Name = form.CategoryName };

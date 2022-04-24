@@ -13,12 +13,14 @@ namespace project_22.Server.Services
         private readonly DataContext _context;
         private readonly ICartService _cartService;
         private readonly IAuthService _authService;
+        private readonly IUserService _userService;
 
-        public OrderService(DataContext context, ICartService cartService, IAuthService authService)
+        public OrderService(DataContext context, ICartService cartService, IAuthService authService, IUserService userService)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _cartService = cartService ?? throw new ArgumentNullException(nameof(cartService));
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
         public async Task<ServiceResponse<List<OrderResponse>>> GetOrders()
@@ -66,12 +68,12 @@ namespace project_22.Server.Services
                 TotalPrice = p.Price * p.Qty
             }));
 
-            //get user info, maybe create UserService to handle this
-            var user = await _context.Users.FindAsync(_authService.GetUserId());
+            //get user info from UserService
+            var user = await _userService.GetUserByIdAsync(_authService.GetUserId());
 
             var order = new Order
             {
-                UserId = _authService.GetUserId(),
+                UserId = _authService.GetUserId(), // get user id from ClaimTypes
                 OrderDate = DateTime.Now,
                 TotalSum = totalPrice,
                 OrderItems = orderItems,
@@ -81,7 +83,7 @@ namespace project_22.Server.Services
             };
 
             _context.Orders.Add(order);
-            _context.CartItems.RemoveRange(_context.CartItems.Where(c => c.UserId == _authService.GetUserId()));
+            _context.CartItems.RemoveRange(_context.CartItems.Where(c => c.UserId == _authService.GetUserId())); // remove just caritems with the same user id
 
             await _context.SaveChangesAsync();
 

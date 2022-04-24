@@ -17,19 +17,19 @@ namespace project_22.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
         {
-            return Ok(await _userService.GetAll());
+            return Ok(await _userService.GetAllAsync());
         }
 
-        [HttpPut("email")]
+        [HttpPut("{email}")]
         public async Task<ActionResult<ServiceResponse<string>>> UpdateUserInfo(UpdateUserForm form, string email)
         {
             return Ok(await _userService.UpdateAsync(form, email));
         }
 
-        [HttpDelete("email")]
+        [HttpDelete("{email}")]
         public async Task<ActionResult<ServiceResponse<bool>>> DeleteUser(string email)
         {
-            return Ok(await _userService.Delete(email));
+            return Ok(await _userService.DeleteAsync(email));
         }
 
     }
