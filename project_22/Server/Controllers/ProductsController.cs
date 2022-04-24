@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
+using project_22.Server.Filters;
 
 namespace project_22.Server.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
-    
+    [ApiController]   
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
@@ -14,7 +13,7 @@ namespace project_22.Server.Controllers
         {
             _productService = productService ?? throw new ArgumentNullException(nameof(productService));
         }
-
+        [UseApiKey]
         [HttpPost]
         public async Task<ActionResult<ServiceResponse<Product>>> CreateProductAsync(AddProductForm product)
         {
@@ -34,12 +33,14 @@ namespace project_22.Server.Controllers
         }
 
         [HttpPut("{id}")]
+        [UseApiKey]
         public async Task<ActionResult<ServiceResponse<Product>>> UpdateProduct(UpdateProductForm form, int id)
         {
             return Ok(await _productService.UpdateAsync(form, id));
         }
 
         [HttpDelete("{id}")]
+        [UseApiKey]
         public async Task<ActionResult<ServiceResponse<int>>> DeleteProduct(int id)
         {
             return Ok(await _productService.DeleteAsync(id));

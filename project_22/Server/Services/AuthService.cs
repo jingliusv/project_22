@@ -128,6 +128,7 @@ namespace project_22.Server.Services
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.FirstName),
                 new Claim(ClaimTypes.Email, user.Email),
+                new Claim("key", _configuration.GetValue<string>("ApiKeys:ApiKey"))
             };
 
             if (user.Email.Equals("admin@visionare.se") || user.Email.Equals("jingliuweb@gmail.com"))

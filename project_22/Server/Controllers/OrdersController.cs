@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using project_22.Server.Filters;
 
 namespace project_22.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [UseApiKey]
     public class OrdersController : ControllerBase
     {
         private readonly IOrderService _orderService;
@@ -27,6 +29,7 @@ namespace project_22.Server.Controllers
         }
 
         [HttpPut("{id}")]
+
         public async Task<ActionResult<ServiceResponse<bool>>> UpdateOrder(UpdateOrder form, int id)
         {
             return Ok(await _orderService.UpdateOrder(form, id));

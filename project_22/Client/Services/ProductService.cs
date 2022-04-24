@@ -31,7 +31,8 @@ namespace project_22.Client.Services
         {     
             if(await _authService.IsUserAuthenticated())
             {
-                var result = await _http.PostAsJsonAsync("api/Products", form);
+                var apiKey = await _authService.GetClaimsApiKey();
+                var result = await _http.PostAsJsonAsync("api/Products?key=" + apiKey, form);
                 return await result.Content.ReadFromJsonAsync<ServiceResponse<Product>>();
             }
             else
@@ -48,7 +49,7 @@ namespace project_22.Client.Services
         }
 
         public async Task GetProducts()
-        {
+        {           
             var result = await _http.GetFromJsonAsync<ServiceResponse<List<Product>>>("api/products");
             if(result != null && result.Data != null)
                 Products = result.Data;
@@ -58,7 +59,8 @@ namespace project_22.Client.Services
         {
             if (await _authService.IsUserAuthenticated())
             {
-                var result = await _http.PutAsJsonAsync($"api/Products/{productId}", form);
+                var apiKey = await _authService.GetClaimsApiKey();
+                var result = await _http.PutAsJsonAsync($"api/Products/{productId}/?key=" + apiKey, form);
                 return await result.Content.ReadFromJsonAsync<ServiceResponse<Product>>();
             }
             else

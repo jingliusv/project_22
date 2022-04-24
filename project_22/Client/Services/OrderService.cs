@@ -25,7 +25,8 @@ namespace project_22.Client.Services
         {
             if(await _authService.IsUserAuthenticated())
             {
-                await _http.PostAsync("api/orders", null);
+                var apiKey = await _authService.GetClaimsApiKey();
+                await _http.PostAsync("api/orders?key=" + apiKey, null);
             }
             else
             {
@@ -35,7 +36,8 @@ namespace project_22.Client.Services
 
         public async Task<List<OrderResponse>> GetOrders()
         {
-            var result = await _http.GetFromJsonAsync<ServiceResponse<List<OrderResponse>>>("api/orders");
+            var apiKey = await _authService.GetClaimsApiKey();
+            var result = await _http.GetFromJsonAsync<ServiceResponse<List<OrderResponse>>>("api/orders?key=" + apiKey);
             return result.Data;
         }
     }
