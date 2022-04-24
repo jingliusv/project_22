@@ -7,6 +7,8 @@ namespace project_22.Server.Services
     {
         Task<ServiceResponse<bool>> PlaceOrder();
         Task<ServiceResponse<List<OrderResponse>>> GetOrders();
+        Task<ServiceResponse<bool>> DeleteOrder(int id);
+        Task<ServiceResponse<bool>> UpdateOrder(UpdateOrder form, int OrderId);
     }
     public class OrderService : IOrderService
     {
@@ -21,6 +23,20 @@ namespace project_22.Server.Services
             _cartService = cartService ?? throw new ArgumentNullException(nameof(cartService));
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+        }
+
+        public async Task<ServiceResponse<bool>> DeleteOrder(int id)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if(order != null)
+            {
+                _context.Orders.Remove(order);
+                await _context.SaveChangesAsync();
+                return new ServiceResponse<bool> { Data = true, Message = $"Beställningen med id nummer {order.Id} tas bort." };
+            }
+                
+
+            return new ServiceResponse<bool> { Success = false, Message = "Tyvärr, vi kan inte hitta den här beställningen." };
         }
 
         public async Task<ServiceResponse<List<OrderResponse>>> GetOrders()
@@ -88,6 +104,19 @@ namespace project_22.Server.Services
             await _context.SaveChangesAsync();
 
             return new ServiceResponse<bool> { Data = true };
+        }
+
+        public async Task<ServiceResponse<bool>> UpdateOrder(UpdateOrder form, int OrderId)
+        {
+            var orderEntity = await _context.Orders.FindAsync(OrderId);
+            if(orderEntity != null)
+            {
+                orderEntity.OrderStatus = form.OrderStatus;
+                _context.Entry(orderEntity).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return new ServiceResponse<bool> { Data = true, Message = $"Vi har uppdaterat beställningsstatus med beställningen id {orderEntity.Id}." };
+            }
+            return new ServiceResponse<bool> { Success = false, Message = "Tyvärr, vi kunde inte uppdaterat besällningen." };
         }
     }
 }

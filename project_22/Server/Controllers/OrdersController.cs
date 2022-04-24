@@ -26,5 +26,17 @@ namespace project_22.Server.Controllers
             return Ok(await _orderService.GetOrders());
         }
 
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ServiceResponse<bool>>> UpdateOrder(UpdateOrder form, int id)
+        {
+            return Ok(await _orderService.UpdateOrder(form, id));
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<ServiceResponse<bool>>> DeleteOrder(int id)
+        {
+            return Ok(await _orderService.DeleteOrder(id));
+        }
+
     }
 }

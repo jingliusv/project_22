@@ -29,7 +29,7 @@ namespace project_22.Server.Services
                 await _context.SaveChangesAsync();
                 return new ServiceResponse<bool> { Data = true, Message = $"Användare med epost({email}) tas bort." };
             }
-            return new ServiceResponse<bool> { Data = false, Message = "Tyvärr, vi kunde inte hittat den här användaren." };
+            return new ServiceResponse<bool> { Success = false, Message = "Tyvärr, vi kunde inte hittat den här användaren." };
         }
 
         public async Task<IEnumerable<User>> GetAllAsync()
